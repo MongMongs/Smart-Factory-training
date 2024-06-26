@@ -1,0 +1,138 @@
+#
+## 1. 설명
+### 1. C# 설명서  ( 참고링크 :https://learn.microsoft.com/ko-kr/dotnet/csharp/tour-of-csharp/overview )
+
+C#은 모든것에 객체가 있음
+
+[web기술]ASP -->  ASP.NET Core ((ASP만드는 코드임)
+(C# .Net Core이랑 다름 = Cross Platform)
+[Window 만 되는거] .Net Fraaimwork
+
+Frame work = 부품을 조합하여 작업함 =  함수(작성된/만들어진 코드)를 이ㅛ용 
+C언어= 부품을 만들어서 작업함
+
+
+
+#### - C# Framework 
+PC/Cloud기준으로 작업
+->Namespace(=Package)e의 집합 => Class들의 집합 => 표현하고 싶은 객체(Coding)
+
+프로그램 관점
+홍길동을 표현하고 싶으면 
+O (머리라고 설정)
+ㅜ (몸통이라 설정)
+ㅅ (다리랄고 설정)
+제약을 컴퓨터 프로그램으로 설정, 개념을 표현(일반화=*추상화*=abstract)했다. 
+한계가 있기에 최선으로 표현하는것이 추상화이다.
+
+####[J2SE]싱글 에디션(개인용) JDK[=JavaFramework]---> 컴퓨터로 할 수 있는 모든것
+
+####[J2EE]기업용(다수의 사람이 사용하는 컴퓨터) => 기업용 인터넷
+
+#### [Android] Mobile Device Frammework
+
+    Console. 객체
+        WriteLine= 함수, 부품
+        ("Hello, World!");= 규칙
+}
+
+## 실습 : 입출력 연습
+###- 간단한 이름을 입력받는 코드
+namespace ConsoleApp7
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string name = Console.ReadLine();
+            //string 값을 입력 받는 함수
+            //name = 변수
+            //string 타입만 받을 수 있음 
+            Console.WriteLine("Hello, World!");
+        }
+    }
+}
+
+###-변수를 따로 선언하여 이름값 입력받는 코드
+namespace ConsoleApp7
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string name;//변수 할당
+            Console.Write("이름은?");
+            name  = Console.ReadLine();//값 할당 및 초기화
+           
+            Console.WriteLine($"이름= {name} ");// 출력
+        }
+    }
+}
+## 컴퓨터 배경 지식
+-폰노이만 아키택쳐(CPU Memory가 중요)
+(cpu(4LU)------memory---> (Flash memory (HDD))
+      ㅣ
+      L1Cash
+      L2Cash
+       :
+      4G
+
+- 거의 모든 언어가 OS위에서 코딩함 (예외=>펌웨어)
+
+
+###실습2 : 두정수 value, value2를 입력받아 그 합을 출력함
+using System;
+
+namespace ConsoleApp7
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int value;
+            int value2;
+            int result;
+            value = Int32.Parse(Console.ReadLine());
+            value2 = Int32.Parse(Console.ReadLine());
+
+            result = value + value2; //int result = value + value2;이것 도 가능!
+            Console.WriteLine(result);// 출력
+        }
+    }
+}
+
+
+#### Quize01
+using System;
+
+namespace Quize_01
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int value1 = Int32.Parse(Console.ReadLine());//100
+            int value2 = Int32.Parse(Console.ReadLine());//200
+            Console.WriteLine($"{value1} {value2}");//100 200
+            //temp로 value1을 잠시 옴겼다 value1을 value2 값으로 선언하고 value2를 temp로 선언하면 위와 같은 코드를 입력해도 출력값의 좌 우가 바껴 나온다
+            int temp = value1;
+            value1=value2;
+            value2 = temp;
+            Console.WriteLine($"{value1} {value2}");//200 100
+        }
+    }
+}
+
+
+
+####
+정수 /정수=> 정수 
+실수/정수=> 실수 
+정수/실수 => 실수 
+실수/실수 => 실수ㅜ
+(double)정수/정수=> 실수
+
+####ㅋ코딩 연습장
+
+
+
