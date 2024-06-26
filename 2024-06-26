@@ -1,6 +1,6 @@
-#
-## 1. 설명
-### 1. C# 설명서  ( 참고링크 :https://learn.microsoft.com/ko-kr/dotnet/csharp/tour-of-csharp/overview )
+
+# 1. 설명
+## 1. C# 설명서  ( 참고링크 :https://learn.microsoft.com/ko-kr/dotnet/csharp/tour-of-csharp/overview )
 
 C#은 모든것에 객체가 있음
 
@@ -13,9 +13,14 @@ C언어= 부품을 만들어서 작업함
 
 
 
-#### - C# Framework 
+### - C# Framework 
 PC/Cloud기준으로 작업
 ->Namespace(=Package)e의 집합 => Class들의 집합 => 표현하고 싶은 객체(Coding)
+
+ex)
+    Console. 객체
+        WriteLine= 함수, 부품
+        ("Hello, World!");= 규칙
 
 프로그램 관점
 홍길동을 표현하고 싶으면 
@@ -25,19 +30,17 @@ O (머리라고 설정)
 제약을 컴퓨터 프로그램으로 설정, 개념을 표현(일반화=*추상화*=abstract)했다. 
 한계가 있기에 최선으로 표현하는것이 추상화이다.
 
-####[J2SE]싱글 에디션(개인용) JDK[=JavaFramework]---> 컴퓨터로 할 수 있는 모든것
+[J2SE]싱글 에디션(개인용) JDK[=JavaFramework]---> 컴퓨터로 할 수 있는 모든것
 
-####[J2EE]기업용(다수의 사람이 사용하는 컴퓨터) => 기업용 인터넷
+[J2EE]기업용(다수의 사람이 사용하는 컴퓨터) => 기업용 인터넷
 
-#### [Android] Mobile Device Frammework
+[Android] Mobile Device Frammework
 
-    Console. 객체
-        WriteLine= 함수, 부품
-        ("Hello, World!");= 규칙
-}
+# 2. 실습 1 : 변수 입출력 연습
 
-## 실습 : 입출력 연습
-###- 간단한 이름을 입력받는 코드
+##- 간단한 이름을 입력받는 코드
+
+<code>
 namespace ConsoleApp7
 {
     internal class Program
@@ -52,8 +55,11 @@ namespace ConsoleApp7
         }
     }
 }
+</code>
 
-###-변수를 따로 선언하여 이름값 입력받는 코드
+##-변수를 따로 선언하여 이름값 입력받는 코드
+
+<code>
 namespace ConsoleApp7
 {
     internal class Program
@@ -68,8 +74,11 @@ namespace ConsoleApp7
         }
     }
 }
-## 컴퓨터 배경 지식
--폰노이만 아키택쳐(CPU Memory가 중요)
+</code>
+
+
+#3. 컴퓨터 배경 지식
+## -폰노이만 아키택쳐(CPU Memory가 중요)
 (cpu(4LU)------memory---> (Flash memory (HDD))
       ㅣ
       L1Cash
@@ -77,10 +86,12 @@ namespace ConsoleApp7
        :
       4G
 
-- 거의 모든 언어가 OS위에서 코딩함 (예외=>펌웨어)
+## 거의 모든 언어가 OS위에서 코딩함 (예외=>펌웨어)
 
 
-###실습2 : 두정수 value, value2를 입력받아 그 합을 출력함
+#4. 실습2
+##- 두정수 value, value2를 입력받아 그 합을 출력함
+<code>
 using System;
 
 namespace ConsoleApp7
@@ -100,11 +111,12 @@ namespace ConsoleApp7
         }
     }
 }
+</code>
 
+##- Quize01
 
-#### Quize01
 using System;
-
+<code>
 namespace Quize_01
 {
     internal class Program
@@ -122,17 +134,37 @@ namespace Quize_01
         }
     }
 }
+</code>
 
 
+##- 
 
-####
+정수 = int 변수명
+실수 = float 변수명
+     = double 변수명
+
 정수 /정수=> 정수 
 실수/정수=> 실수 
 정수/실수 => 실수 
 실수/실수 => 실수ㅜ
 (double)정수/정수=> 실수
 
-####ㅋ코딩 연습장
+##- 코딩 연습장 문제 : 실수 섭씨온도를 실수 화씨옹도로 변환하는 코드
 
+<code>
+namespace CtoF
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int C = Int32.Parse(Console.ReadLine());
+            double F = 0.0;
+            F = (double)C * 9 / 5 + 32;
+            Console.WriteLine($"\n \n {F}");
 
+        }
+    }
+}
 
+</code>
