@@ -1,1 +1,1 @@
-# Smart-Factory-trainning
+# Smart-Factory-training
