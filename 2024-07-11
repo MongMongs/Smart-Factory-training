@@ -1,0 +1,749 @@
+## - 
+
+```
+namespace ConsoleApp66
+{
+    class Person // 명사 대문자로 시작
+    {
+        //1. 맴버 변수
+        private string name;
+        private int age;
+
+        //2. 생성자 // 싱글톤 제외하고 거의 모든 상황에서 public 사용
+        public Person()// default 생성자
+        {
+        }
+        public Person(string _name)
+        {
+            name = _name;
+        }
+        public Person(string _name, int _age)
+        {
+            this.age = _age; // this.는 생략 가능!
+            this.name = _name;
+        }
+        //
+        public void Eat() //  오버로딩
+        {
+            Console.WriteLine("밥을 먹습니다");
+
+        }
+        public void Eat(string food)
+        {
+            Console.WriteLine(food + "을(를) 먹습니다");
+        }
+        //Getter, Setter c#에선 이런 형식 말고 property를 사용함
+        public void SetName(string _name)
+        {
+            this.name = _name;
+        }
+        public string GetName()
+        {
+            return this.name;
+        }
+        
+        public int GetAge()
+        {
+            return this.age;
+        }
+        public void SetAge(int _age)
+        {
+            this.age = _age;
+        }
+    }
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Person Tom = new Person();
+            Tom.Eat();
+            Tom.Eat("피자");
+            Console.WriteLine(Tom.GetName());
+
+            Person Sam = new Person("Sam");
+            Console.WriteLine(Sam.GetName());
+            Console.WriteLine(Sam.GetAge());
+
+            Person Tony = new Person("Tony", 24);
+            Console.WriteLine(Tony.GetName());
+            Console.WriteLine(Tony.GetAge());
+        }
+    }
+}
+```
+
+## - 실행 결과
+
+```
+밥을 먹습니다
+피자을(를) 먹습니다
+
+0
+Sam
+21
+Tony
+24
+```
+## - 
+
+```
+namespace ConsoleApp66
+{
+    class Person // 명사 대문자로 시작
+    {
+        //1. 맴버 변수
+        //private string name;
+        //private int age;
+        //private string job;
+        //Property
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public string Job { get; set; }
+
+        //2. 생성자 // 싱글톤 제외하고 거의 모든 상황에서 public 사용
+        public Person()// default 생성자
+        { 
+        }
+        public Person (string _name)
+        {
+            Name = _name;
+        }
+        public Person(string _name, int _age) 
+        {
+            this.Age = _age; // this.는 생략 가능!
+            this.Name = _name;
+        }
+        //
+        public void Eat() //  오버로딩
+        {
+            Console.WriteLine("밥을 먹습니다");
+
+        }
+        public void Eat(string food)
+        {
+            Console.WriteLine(food + "을(를) 먹습니다");
+        }
+        //Getter, Setter c#에선 이런 형식 말고 property를 사용함
+        //public string GetName()
+        //{
+        //    return this.name;
+        //}
+        //public string SetName(string _name)
+        //{
+        //    this.name = _name;
+        //}
+        //public int GetAge()
+        //{
+        //    return this.age;
+        //}
+        //public int SetAge(int _age)
+        //{
+        //    this.age = _age;
+        //}
+    }
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Person Tom = new Person();
+            Tom.Eat();
+            Tom.Eat("피자");
+            Tom.Job = "의사";
+            Console.WriteLine(Tom.Job);
+            //Console.WriteLine(Tom.GetName());
+
+            Person Sam = new Person("Sam");
+            //Console.WriteLine(Sam.GetName());
+            //Console.WriteLine(Sam.GetAge());
+
+            Console.WriteLine(Sam.Age);
+            Console.WriteLine(Sam.Name);
+
+            Person Tony = new Person("Tony", 24);
+            Tony.Job = "디자이너";
+            Console.WriteLine(Tony.Job);
+            Console.WriteLine(Tony.Age);
+            Console.WriteLine(Tony.Name);
+            //Console.WriteLine(Tony.GetName());
+            //Console.WriteLine(Tony.GetAge());
+        }
+    }
+}
+
+```
+
+## - 실행 결과
+
+```
+밥을 먹습니다
+피자을(를) 먹습니다
+의사
+0
+Sam
+디자이너
+24
+Tony
+```
+
+## - 
+
+```
+namespace ConsoleApp66
+{
+    class Car // 명사 대문자로 시작
+    {
+        //1. 맴버 변수
+        //private string brand;
+        //private string speed;
+        public string brand { get; set; }
+        public int speed {  get; set; }
+
+        //2. 생성자 // 싱글톤 제외하고 거의 모든 상황에서 public 사용
+        public Car()// default 생성자
+        {
+        }
+        public Car(string _brand)
+        {
+            brand = _brand;
+        }
+        public Car(string _brand, int _speed)
+        {
+            this.speed = _speed; // this.는 생략 가능!
+            this.brand = _brand;
+        }
+        
+        //
+        public void Drive() //  오버로딩
+        {
+            Console.WriteLine("달립니다.");
+
+        }
+        public void Drive(string Model)
+        {
+            Console.WriteLine(Model + "가 달립니다");
+        }
+        //public string GetSpeed() { return this.speed; }
+        //public string GetBrand() { return this.brand; } 
+        //public string SetBrand(string _brand) { brand = _brand; }
+        //public int SetSpeed(int _speed) { speed = _speed; }
+
+    }
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Car avante = new Car();
+            avante.Drive();
+            avante.Drive("아반떼");
+            avante.speed=20;
+            Console.WriteLine(avante.speed);
+            //avante.SetBrand("현대");
+            //avante.SetSpeed(40);
+            //Console.WriteLine(avante.GetBrand());
+            //Console.WriteLine(avante.GetSpeed())
+
+            Car granger = new Car("HyunDai", 70);
+            granger.Drive();
+            granger.Drive("그랜저");
+            Console.WriteLine("brand : " + granger.brand);
+            Console.WriteLine("velocity : "+granger.speed);
+            //Console.WriteLine(granger.GetBrand());
+            //Console.WriteLine(granger.GetSpeed())
+        }
+    }
+}
+
+```
+
+## - 실행 결과
+
+```
+달립니다.
+아반떼가 달립니다
+20
+달립니다.
+그랜저가 달립니다
+brand : HyunDai
+velocity : 70
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
+## - 
+
+```
+
+```
+
+## - 실행 결과
+
+```
+
+```
+
