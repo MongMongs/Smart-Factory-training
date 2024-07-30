@@ -1,0 +1,203 @@
+## - SQL 시험 
+
+```
+
+
+-- Q3
+
+ SELECT EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO FROM EMP 
+ WHERE ENAME LIKE '%S';
+
+--Q4
+SELECT EMPNO, ENAME, JOB, SAL, DEPTNO FROM EMP 
+WHERE DEPTNO = 30 AND JOB = 'SALESMAN';
+
+--Q5
+SELECT EMPNO, ENAME, JOB, SAL, DEPTNO FROM EMP 
+WHERE SAL > 2000 AND DEPTNO != 10;
+
+SELECT EMPNO, ENAME, JOB, SAL, DEPTNO FROM EMP 
+WHERE DEPTNO >= 20 
+INTERSECT
+SELECT EMPNO, ENAME, JOB, SAL, DEPTNO FROM EMP 
+WHERE  SAL > 2000;
+
+--Q6
+SELECT EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO FROM EMP 
+WHERE SAL >=2000 AND SAL <=3000;
+
+--Q7
+SELECT EMPNO, ENAME, SAL, DEPTNO FROM EMP 
+WHERE DEPTNO = 30 AND SAL NOT BETWEEN 1000 AND 2000;
+
+--Q8
+SELECT EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO FROM EMP 
+WHERE COMM IS NULL AND MGR IS NOT NULL AND ENAME NOT LIKE '_L%' AND JOB IN ('MANAGER', 'CLERK');
+
+--Q9
+SELECT EMPNO, RPAD(TO_CHAR(SUBSTR(EMPNO,1,2)),4,'*') AS MASKING_EMPNO, ENAME, RPAD(SUBSTR(ENAME,1,1),5,'*') AS MASKING_ENAME FROM EMP;
+
+--Q10
+SELECT EMPNO, ENAME, SAL, TRUNC(SAL/21.5, 2) AS DAY_PAY, ROUND((SAL/21.5)/8, 1) AS TIME_PAY FROM EMP;
+
+--Q11
+SELECT EMPNO, ENAME, HIREDATE, TO_CHAR(NEXT_DAY(ADD_MONTHS(HIREDATE, 3), '월요일'),'YYYY-MM-DD') AS R_JOB ,COMM FROM EMP;
+
+--Q12
+SELECT EMPNO, ENAME, MGR, 
+CASE 
+WHEN TO_CHAR(MGR) IS NULL THEN '0000' 
+WHEN TO_CHAR(MGR) = '75%' THEN '5555' 
+WHEN TO_CHAR(MGR) = '76%' THEN '6666' 
+WHEN TO_CHAR(MGR) = '77%' THEN '7777' 
+WHEN TO_CHAR(MGR) = '78%' THEN '8888' 
+ELSE TO_CHAR(MGR)
+END AS CHG_MGR
+FROM EMP;
+
+--Q13
+SELECT DEPTNO, TRUNC(AVG(SAL)) AS AVG_SAL, MAX(SAL) AS MAX_SAL, MIN(SAL) AS MIN_SAL, COUNT(DEPTNO) AS CNT FROM EMP GROUP BY DEPTNO;
+
+--Q14 X
+SELECT JOB, COUNT(JOB) FROM EMP HAVING COUNT(JOB)>=3 GROUP BY JOB;
+
+--Q15
+SELECT TO_CHAR(TRUNC(HIREDATE,'YYYY'),'YYYY') AS HIRE_YEAR, DEPTNO, COUNT(TRUNC(HIREDATE,'YYYY')) AS CNT FROM EMP GROUP BY DEPTNO ,TRUNC(HIREDATE,'YYYY')ORDER BY TRUNC(HIREDATE,'YYYY') DESC, DEPTNO ;
+
+--Q16
+SELECT NVL2(COMM, 'O', 'X') AS EXIST_COMM, COUNT(NVL2(COMM, 'O', 'X')) AS CNT FROM EMP GROUP BY NVL2(COMM, 'O', 'X');
+
+--Q17
+SELECT D.DEPTNO, D.DNAME, E.EMPNO, E.ENAME, E.SAL 
+FROM EMP E, DEPT D 
+WHERE E.DEPTNO = D.DEPTNO AND SAL > 2000 ORDER BY D.DEPTNO;
+
+SELECT DEPTNO, D.DNAME, E.EMPNO, E.ENAME, E.SAL 
+FROM EMP E NATURAL JOIN DEPT D 
+WHERE  SAL > 2000 ORDER BY DEPTNO;
+
+--Q18
+SELECT D.DEPTNO, D.DNAME, TRUNC(AVG(E.SAL)), MAX(E.SAL), MIN(E.SAL), COUNT(D.DEPTNO)
+FROM EMP E, DEPT D WHERE E.DEPTNO = D.DEPTNO group by D.DEPTNO, D.DNAME 
+ ORDER BY D.DEPTNO;
+
+SELECT DEPTNO, D.DNAME, TRUNC(AVG(E.SAL)), MAX(E.SAL), MIN(E.SAL), COUNT(DEPTNO) 
+FROM EMP E NATURAL JOIN DEPT D 
+group by DEPTNO, D.DNAME ORDER BY DEPTNO;
+
+--Q19
+SELECT D.DEPTNO, D.DNAME, E.EMPNO, E.ENAME, E.JOB, E.SAL 
+FROM EMP E, DEPT D 
+WHERE E.DEPTNO = D.DEPTNO ORDER BY D.DEPTNO, E.ENAME;
+
+SELECT DEPTNO, D.DNAME, E.EMPNO, E.ENAME, E.JOB, E.SAL 
+FROM EMP E NATURAL JOIN DEPT D ORDER BY DEPTNO, E.ENAME;
+
+--Q20
+SELECT E.JOB, E.EMPNO, E.ENAME, E.SAL, D.DEPTNO, D.DNAME
+FROM EMP E, DEPT D 
+WHERE E.DEPTNO = D.DEPTNO AND E.JOB = (SELECT JOB FROM EMP WHERE ENAME = 'ALLEN');
+
+--Q21
+SELECT E.EMPNO, E.ENAME, E.JOB, DEPTNO, D.DNAME, D.LOC
+FROM EMP E NATURAL JOIN DEPT D WHERE DEPTNO = 10 AND E.JOB NOT IN (SELECT DISTINCT JOB FROM EMP WHERE DEPTNO = 30);
+
+-- 저렇게 서브 쿼리를 사용할 때 IN을 써야 오류가 안남!! !=이나 = 사용하면 오류남
+SELECT JOB FROM EMP;
+SELECT DISTINCT JOB FROM EMP WHERE DEPTNO = 30;
+
+
+--Q22
+
+--Q24
+CREATE TABLE EMP_HW(
+    EMPNO   NUMBER(4),
+    ENAME   VARCHAR(10),
+    JOB     VARCHAR(9),
+    MGR     NUMBER(4),
+    HIREDATE    DATE,
+    SAL     NUMBER(7,2),
+    COMM    NUMBER(7,2),
+    DEPTNO  NUMBER(2)
+);
+--Q25
+ALTER TABLE EMP_HW
+    ADD BINGO VARCHAR(20);
+
+--Q26
+ALTER TABLE EMP_HW
+    MODIFY BINGO VARCHAR(30);
+    
+--Q27
+ALTER TABLE EMP_HW
+    RENAME COLUMN BINGO TO REMARK;
+--Q29 X
+CREATE TABLE EMP_HW
+    AS SELECT *FROM EMP;
+
+ALTER TABLE EMP_HW 
+ADD REMARK VARCHAR(30);
+
+
+--Q30
+DROP TABLE EMP_HW;
+
+
+SELECT * FROM EMP_HW;
+DESC EMP_HW;
+
+SELECT * FROM EMP;
+SELECT * FROM DEPT;
+
+```
+
+## -신호등 만들기
+```
+namespace WinFormsApp24
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+            pictureBox1.Image = Image.FromFile(Environment.CurrentDirectory + "/증지!.png"
+               ); 
+               // 사용하는 윈폼 파일안의 bin\Debug\net8.0-windows 에 이미지 파일을 넣으면 Environment.CurrentDirectory + "이미지 파일 명" 으로 윈폼 내에서 데이터를 사용할 수 있다.
+               //나는 Users\A\source\repos\WinFormsApp24\bin\Debug\net8.0-windows 안에 이미지 파일을 넣어줘야 이미지가 나온.
+               // 이미지 파일을 넣을 때 \=>/로 대채해 넣어야 하고 .png 파일의 확장자 명 까지 다 넣어줘야 작동한다.
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            pictureBox1.Image = Image.FromFile(Environment.CurrentDirectory + "/노랑불.png"
+               );
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+            pictureBox1.Image = Image.FromFile(Environment.CurrentDirectory +"/초록불(출발).png"
+               );
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+
+            pictureBox1.Image = Image.FromFile(Environment.CurrentDirectory + "/대기.png"
+               );
+        }
+    }
+}
+```
