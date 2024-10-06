@@ -232,4 +232,20 @@ ros2 run omo_r1_bringup cmd_vel_publisher.py
 ros2 run omo_r1_bringup command_interface.py
 ```
 
+## 포트 확인 코드
 
+```
+ls /dev/tty*
+```
+
+## omo 로봇 연결 포트 권한 
+
+```
+sudo chmod 666 /dev/ttyUSB0
+```
+
+## 아두이노 포트 권한
+
+```
+sudo chmod 666 /dev/ttyACM0
+```
