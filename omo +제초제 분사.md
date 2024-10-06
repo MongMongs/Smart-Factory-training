@@ -1,4 +1,20 @@
-#
+
+## 아래 파일 위치
+
+```~/ros2_ws/
+    └── src/
+        └── omo_r1_bringup/
+            ├── scripts/
+            │   ├── command_interface.py       # 새로운 스크립트
+            │   └── teleop_key.py              # 기존 키보드 조종 스크립트 (필요 시 삭제)
+            ├── launch/
+            │   └── omo_r1_motor.launch.py
+            ├── nodes/
+            │   ├── omo_r1_motor_node.py
+            │   └── cmd_vel_publisher.py        # 새로운 노드
+            ├── CMakeLists.txt  
+            └── package.xml    
+```
 
 ## cmd_vel_publisher.py
 
