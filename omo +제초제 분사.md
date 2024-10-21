@@ -13,7 +13,7 @@
             │   ├── omo_r1_motor_node.py
             │   └── cmd_vel_publisher.py        # 새로운 노드
             ├── CMakeLists.txt  
-            └── package.xml    \
+            └── package.xml 
     
     Arduino IDE 입력 - wd_bh_arduino_control.ino
 ```
