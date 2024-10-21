@@ -13,7 +13,9 @@
             │   ├── omo_r1_motor_node.py
             │   └── cmd_vel_publisher.py        # 새로운 노드
             ├── CMakeLists.txt  
-            └── package.xml    
+            └── package.xml    \
+    
+    Arduino IDE 입력 - wd_bh_arduino_control.ino
 ```
 
 ## cmd_vel_publisher.py
@@ -60,6 +62,9 @@ class CmdVelPublisher(Node):
             elif command == 'wd':
                 self.get_logger().info('Received wd command. Performing custom actions.')
                 self.perform_wd_action()  # wd 명령 처리 함수 호출
+            elif command == 'bh':
+                self.get_logger().info('Received bh command. Performing custom actions.')
+                self.perform_bh_action()  # bh 명령 처리 함수 호출
             elif command == 'exit':
                 self.running = False
                 self.get_logger().info('Received exit command. Stopping node.')
@@ -95,6 +100,35 @@ class CmdVelPublisher(Node):
         self.running = True
         self.get_logger().info('Resuming forward movement.')
 
+    def perform_bh_action(self):
+        """bh 명령을 수행하는 함수"""
+        # 1. 즉시 정지
+        twist = Twist()
+        twist.linear.x = 0.0
+        self.publisher.publish(twist)
+        self.get_logger().info('Robot stopped.')
+
+        # 2. 2초 동안 뒤로 이동
+        twist.linear.x = -0.3  # 뒤로 가는 속도
+        self.publisher.publish(twist)
+        self.get_logger().info('Moving backward for 2 seconds.')
+        time.sleep(2)
+
+        # 3. 다시 정지
+        twist.linear.x = 0.0
+        self.publisher.publish(twist)
+        self.get_logger().info('Robot stopped after moving backward.')
+
+        # 4. 6번 핀을 2초간 ON하고 카운트다운 시작 (아두이노 또는 외부 기기와의 통신)
+        print("Turning on pin 6 for 2 seconds and starting countdown.")
+        # 여기서 아두이노로 'bh' 명령 전송 코드 필요
+        # ser.write(b'bh\n') 와 같은 방식으로 아두이노와 통신
+
+        # 5. 카운트 다운 출력
+        for i in range(3, 0, -1):
+            print(f"{i}...")
+            time.sleep(1)
+
     def publish_cmd_vel(self):
         twist = Twist()
         twist.linear.x = self.speed
@@ -128,7 +162,6 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
-
 ```
 
 ## omo_r1_motor_node.py
@@ -365,4 +398,78 @@ ament_package()
   </export>
 </package>
 
+```
+
+## wd_bh_arduino_control.ino
+
+
+```
+#include <Servo.h>
+
+Servo servoMotor;
+int currentAngle = 90;  // 서보 모터의 현재 각도 (90도: 중앙)
+int angleStep = 60;     // 각도 변화 (60도)
+bool directionRight = true;  // 오른쪽 방향이면 true, 왼쪽이면 false
+
+void setup() {
+  // 서보 모터 핀 설정 (예: D9 핀)
+  servoMotor.attach(9);
+
+  // 서보 모터를 중앙으로 설정
+  servoMotor.write(currentAngle);
+
+  // 시리얼 통신 시작
+  Serial.begin(115200);
+  Serial.println("Servo motor initialized to 90 degrees.");
+}
+
+void loop() {
+  // 시리얼로부터 데이터가 들어왔는지 확인
+  if (Serial.available() > 0) {
+    String command = Serial.readStringUntil('\n');  // '\n'까지 데이터를 읽음
+    command.trim();
+
+    if (command == "wd") {
+      Serial.println("Received 'wd' command");
+      controlServo();  // 서보 모터 제어
+    } else if (command == "bh") {
+      Serial.println("Received 'bh' command");
+      executeBHCommand();  // bh 명령 처리
+    }
+  }
+}
+
+// 서보 모터 제어 함수
+void controlServo() {
+  if (directionRight) {
+    currentAngle += angleStep;  // 오른쪽으로 회전
+    if (currentAngle > 180) currentAngle = 180;  // 최대 각도 제한
+    directionRight = false;  // 방향 전환
+  } else {
+    currentAngle -= angleStep;  // 왼쪽으로 회전
+    if (currentAngle < 0) currentAngle = 0;  // 최소 각도 제한
+    directionRight = true;  // 방향 전환
+  }
+  servoMotor.write(currentAngle);  // 서보 모터 각도 설정
+  Serial.print("Servo motor moved to ");
+  Serial.print(currentAngle);
+  Serial.println(" degrees.");
+}
+
+// 'bh' 명령 처리 함수
+void executeBHCommand() {
+  // 6번 핀을 2초간 ON과 동시에 카운트다운 시작
+  Serial.println("Turning on pin 6 for 2 seconds and starting countdown.");
+  digitalWrite(6, HIGH);
+
+  // 카운트 다운 출력 (동시에 진행)
+  for (int i = 3; i > 0; i--) {
+    Serial.println(i);
+    delay(1000);  // 1초 대기
+  }
+
+  // 2초 뒤에 릴레이 OFF
+  digitalWrite(6, LOW);
+  Serial.println("Pin 6 turned off.");
+}
 ```
