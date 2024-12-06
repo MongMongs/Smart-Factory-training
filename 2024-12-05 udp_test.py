@@ -1,6 +1,6 @@
 import socket
 import time
-from gpiozero import DistanceSensor, DigitalOutputDevice, LED
+from gpiozero import OutputDevice, DistanceSensor, DigitalOutputDevice, LED
 import threading
 import json
 import os
@@ -21,10 +21,10 @@ sensor = DistanceSensor(echo=24, trigger=23, max_distance=5)  # Ultrasonic senso
 # Motor specifications
 DEGREE_PER_STEP = 5.625 / 64  # Degree per step for 28BYJ-48
 
-# Define GPIO pins
-StepPins = [DigitalOutputDevice(8), DigitalOutputDevice(9),
+# Define dispatch motor GPIO pins
+Remove_motor_Pins = [DigitalOutputDevice(8), DigitalOutputDevice(9),
             DigitalOutputDevice(10), DigitalOutputDevice(11)]
-
+ 
 # Step counter
 g_nStepCounter = 0
 
@@ -35,15 +35,22 @@ Seq = [[0, 0, 0, 1],
        [0, 1, 0, 0],
        [1, 0, 0, 0]]
 
+# L298N control pin setup
+A_plus = OutputDevice(17)  # IN1
+A_minus = OutputDevice(18) # IN2
+B_plus = OutputDevice(27)  # IN3
+B_minus = OutputDevice(22) # IN4
+
+# Step sequence definition (bipolar mode)
+supply_step_Seq = [
+    (1, 0, 1, 0),  # A+, B+
+    (1, 0, 0, 1),  # A+, B-
+    (0, 1, 0, 1),  # A-, B-
+    (0, 1, 1, 0),  # A-, B+
+]
+
 # Relay
 Relay = LED(3)
-
-# Step_8825
-CONST_PIN_MOT_DIR_8825 = DigitalOutputDevice(20)
-CONST_PIN_MOT_STEP_8825 = DigitalOutputDevice(21)
-CONST_MOT_SPR_8825 = 48
-CONST_MOT_DELAY_8825 = 0.0208
-CONST_MOT_DEGREE_8825 = 7.5
 
 # ========== Functions ==========
 
@@ -152,9 +159,12 @@ def handle_part_mode(sock):
             elif command.lower() == "dp_item":
                 dispatch_item()
                 print("dispatching item part mode.")
-            elif command.lower() == "motor_control":
-                rotate_motor()
-                print("monitoring distance part mode.")            
+            elif command.lower() == "rotate_remove_motor":
+                get_rotate_angle_28BYJ_48(sock)
+                print("rotating remove motor part mode.")
+            elif command.lower() == "rotate_supply_motor":
+                get_rotate_angle_supply_motor(sock)  # Call the new function        
+                print("rotating remove motor part mode.") 
             elif command.lower() == "monitor_distance":
                 monitor_distance()
                 print("monitoring distance part mode.")
@@ -201,7 +211,7 @@ def mode_setting(sock):
             else:
                 print(f"[Error] Unrecognized command: {command}")
 
-def rotate_motor(sock):
+def get_rotate_angle_28BYJ_48(sock):
     print("UDP Server Start (local port: 10000)")
     while True:
         command = check_terminal_command(sock)  # Call the reusable function
@@ -223,9 +233,9 @@ def cmd_rotate_motor_28BYJ_48(angle):
     for _ in range(steps):
         for pin in range(4):
             if Seq[g_nStepCounter][pin] != 0:
-                StepPins[pin].on()
+                Remove_motor_Pins[pin].on()
             else:
-                StepPins[pin].off()
+                Remove_motor_Pins[pin].off()
         g_nStepCounter += direction
         if g_nStepCounter >= StepCount:
             g_nStepCounter = 0
@@ -234,64 +244,35 @@ def cmd_rotate_motor_28BYJ_48(angle):
         time.sleep(0.0019)
     print(f"Rotation of {angle} degrees completed!")
 
-def cmd_org_28BYJ_48(sock):
-    global g_nStepCounter
-    
+def get_rotate_angle_supply_motor(sock):
+    print("UDP Server Start (local port: 10000)")
     while True:
-        command = check_terminal_command(sock)  # Use socket to receive commands
+        command = check_terminal_command(sock)  # Call the reusable function
         if command:
-            if command.upper() == "P":
-                print("[Simulation] Server response: Good")
-                return "Good"
-            elif command.upper() == "D":
-                print("[Simulation] Server response: Bad")
-                return "Bad"
-            else:
-                print("[Error] Invalid input. Enter P or D.")
+            try:
+                angle = float(command)  
+                print(f"Rotating motor by {angle} degrees...")
+                cmd_rotate_supply_motor(angle) 
+            except ValueError:
+                print(f"[Error] '{command}' is not a valid number. Please enter a valid number.")
+                continue 
 
+def cmd_rotate_supply_motor(angle):
+    """
+    Rotate the supply motor (L298N) by the given angle.
+    :param angle: Angle in degrees to rotate.
+    """
+    DEGREE_PER_STEP_SUPPLY = 1.8  # Degree per step for L298N motor
+    steps = int(abs(angle) / DEGREE_PER_STEP_SUPPLY)  # Calculate number of steps
+    direction = 1 if angle > 0 else -1  # Determine direction
 
-
-    print(f"Rotating {angle} degrees ({steps} steps)")
+    print(f"Rotating supply motor by {angle} degrees ({steps} steps)...")
     for _ in range(steps):
-        for pin in range(4):
-            if Seq[g_nStepCounter][pin] != 0:
-                StepPins[pin].on()
-            else:
-                StepPins[pin].off()
-        g_nStepCounter += direction
-        if g_nStepCounter >= StepCount:
-            g_nStepCounter = 0
-        elif g_nStepCounter < 0:
-            g_nStepCounter = StepCount - 1
-        time.sleep(0.0019)
-
-def cmd_rotate_motor_8825(angle):
-
-    steps = int(abs(angle) / CONST_MOT_DEGREE_8825)
-    direction = 1 if angle > 0 else -1
-    step_counter = 0 if direction == 1 else StepCount - 1
-
-    if direction == 1:
-        CONST_PIN_MOT_DIR_8825.on()    
-    else:
-        CONST_PIN_MOT_DIR_8825.off()
-
-    print(f"Rotating {angle} degrees ({steps} steps)")
-    for _ in range(steps):
-        CONST_PIN_MOT_STEP_8825.on()
-        time.sleep(CONST_MOT_DELAY_8825)
-        CONST_PIN_MOT_STEP_8825.off()
-        time.sleep(CONST_MOT_DELAY_8825)
-        
+        for step in (supply_step_Seq if direction == 1 else reversed(supply_step_Seq)):
+            A_plus.value, A_minus.value, B_plus.value, B_minus.value = step
+            time.sleep(0.01)  # Delay between steps
     print(f"Rotation of {angle} degrees completed!")
 
-
-def cmd_org_8825(rps):
-    CONST_PIN_MOT_DIR_8825.off()
-    CONST_PIN_MOT_STEP_8825.on()
-    time.sleep(CONST_MOT_DELAY_8825)
-    CONST_PIN_MOT_STEP_8825.off()
-    time.sleep(CONST_MOT_DELAY_8825)
 
 
 def dispatch_item():
@@ -299,9 +280,9 @@ def dispatch_item():
     Dispatch an item: Rotate 180° and return.
     """
     print("[Raspberry Pi] Starting item dispatch")
-    cmd_rotate_motor_8825(180)
+    cmd_rotate_supply_motor(170)
     time.sleep(0.5)
-    cmd_rotate_motor_8825(-180)
+    cmd_rotate_supply_motor(-170)
     print("[Raspberry Pi] Item dispatch completed")
 
 def start_conveyor_belt():
@@ -379,8 +360,11 @@ def reset_all_motors():
     """
     print("[Raspberry Pi] Resetting all motors...")
     Relay.off()
-    CONST_PIN_MOT_DIR_8825.off()
-    CONST_PIN_MOT_STEP_8825.off()  # Disable motor
+    A_plus.off()
+    A_minus.off()
+    B_plus.off()
+    B_minus.off()
+
     print("[Raspberry Pi] All motors reset completed.")
 
 def cleanup_gpio():
@@ -388,8 +372,11 @@ def cleanup_gpio():
     Clean up gpiozero resources.
     """
     Relay.close()
-    CONST_PIN_MOT_STEP_8825.close()
-    CONST_PIN_MOT_DIR_8825.close()
+    A_plus.off()
+    A_minus.off()
+    B_plus.off()
+    B_minus.off()
+
     print("[Raspberry Pi] GPIO resources cleaned up.")
 
 def main():
